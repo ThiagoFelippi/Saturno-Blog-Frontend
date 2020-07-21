@@ -14,8 +14,7 @@ import Input from '../../../components/Input'
 import { gql, useMutation } from '@apollo/client'
 
 // Toastify
-import { toast } from 'react-toastify'
-toast.configure()
+import createToast from '../../../services/createToast'
 
 interface UserLogin{
   email : string;
@@ -32,22 +31,6 @@ const mutationLogin = gql`
     }
 }
 `
-
-const createToast = (type : String, message : String) => {
-  const config = {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-  } as any
-  type === "success" ? 
-    toast.success(message, config) 
-    :
-    toast.error(message, config)
-
-}
 
 const Login: React.FC = () => {
   const [buttonText, setButtonText] = useState("Entrar")
