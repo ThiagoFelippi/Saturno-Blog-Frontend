@@ -13,7 +13,7 @@ const CreatePost: React.FC = () => {
     <>
         {
           ReactDOM.createPortal(
-            <Modal opened={opened} click={() => setOpened(opened ? false : true)} />,
+            <Modal opened={opened} close={() => setOpened(opened ? false : true)} />,
             document.getElementById("modal-root")
           )
         }

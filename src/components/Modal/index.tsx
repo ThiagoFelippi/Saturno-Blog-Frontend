@@ -19,14 +19,15 @@ import * as yup from 'yup'
 // Toastify 
 import createToast from '../../services/createToast'
 
-interface Props{
-  opened?: boolean;
-  click?: () => void;
-}
-
 interface PostInfo{
   title: string;
   content: string;
+}
+
+interface Props{
+  close: () => void;
+  opened?: boolean;
+  value? : PostInfo
 }
 
 const createPost = gql`
@@ -40,13 +41,13 @@ const createPost = gql`
   }
 `
 
-const ModalComponent: React.FC<Props> = ({opened, click}) => {
+const ModalComponent: React.FC<Props> = ({opened, close, value}) => {
   const [ postInfos, setPostInfos ] = useState<PostInfo>({} as PostInfo)
 
   const [ postCreated, { data, error } ] = useMutation(createPost)
 
   const validate = yup.object().shape({
-    title: yup.string().required(),
+    title: yup.string().required().max(26),
     content: yup.string().required().min(20),
   })
 
@@ -64,9 +65,10 @@ const ModalComponent: React.FC<Props> = ({opened, click}) => {
             content: `${postInfos.content}`
           }
         })
-        // Toastify de criado e fecha modal
+        close()
+        return createToast("success", "Post criado com sucesso")
       }
-
+      // Mudar as mensagem do toastify e apresentar regras para as postagens
       createToast("error", "Erro ao criar post, lembre que o conteúdo deve ter no mínimo 20 caracteres e o título 5")
     
     }
@@ -78,9 +80,9 @@ const ModalComponent: React.FC<Props> = ({opened, click}) => {
 
   return opened?
     <Container>
-      <Close onClick={click} />
+      <Close onClick={close} />
       <Modal>
-        <CloseModal onClick={click}>
+        <CloseModal onClick={close}>
             <MdClose size={30} color="#fff" />
         </CloseModal>
         <Header>
@@ -88,8 +90,8 @@ const ModalComponent: React.FC<Props> = ({opened, click}) => {
           <hr/>
         </Header>
         <Body>
-          <Input change={e => setPostInfos({...postInfos, title: e.target.value})} placeholder="Digite o título do seu post..." required /> 
-          <ContentPost onChange={e => setPostInfos({...postInfos, content: e.target.value})} placeholder="Digite o conteúdo do seu post..." maxLength={200} required />
+          <Input value={value.title} change={e => setPostInfos({...postInfos, title: e.target.value})} placeholder="Digite o título do seu post..." required /> 
+          <ContentPost onChange={e => setPostInfos({...postInfos, content: e.target.value})} placeholder="Digite o conteúdo do seu post..." maxLength={200} required value={value.content} />
         </Body>
         <Footer>
           <Button click={e => handleCreatePost(e)} text="Criar Post" />

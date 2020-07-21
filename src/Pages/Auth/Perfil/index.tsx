@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 // Style
 import { Container, Description, Image, Name, AboutMe, SocialMedias, Logos, Network, Posts } from './styles'
@@ -25,13 +25,23 @@ import { useQuery, gql } from '@apollo/client'
 const getPostByUserId = gql`
   query getPostByUserId{
     getPostByUserId{
+      id
       title
+      content
     }
   }
 `
 const Home: React.FC = () => {
   const { user, loading } = useContext(AppContext)
   const {error, data} = useQuery(getPostByUserId)
+  const [ posts, setPosts ] = useState([])
+
+  useEffect(() => {
+    if(data){
+      setPosts(data.getPostByUserId)
+    }
+
+  }, [data, posts])
 
   return loading?
     <h1> Loading... </h1>
@@ -68,9 +78,11 @@ const Home: React.FC = () => {
             </>
             :
             <>
-              <Post myPost />
-              <Post myPost />
-              <Post myPost />
+            {
+              posts.map((post) => (
+                <Post id={post.id} key={post.id} title={post.title} content={post.content} myPost />
+              ))
+            }
             </>
           }
         </Posts>

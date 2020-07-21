@@ -7,11 +7,12 @@ interface Props{
   type? : string;
   change: (e : React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
+  value?: string;
 }
 
-const InputComponent: React.FC<Props> = ({placeholder, type, change, required}) => {
+const InputComponent: React.FC<Props> = ({placeholder, type, change, required, value}) => {
   return (
-    <Input type={type || "text"} onChange={change} placeholder={placeholder} required={required} />
+    <Input value={value} type={type || "text"} onChange={change} placeholder={placeholder} required={required} />
   )
 }
 
