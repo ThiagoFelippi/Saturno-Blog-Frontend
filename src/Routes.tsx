@@ -4,8 +4,12 @@ import CreateGlobalStyle from './styles/globalStyle'
 // Router
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 
-// Pages
+// Components
 
+// Toastify
+import 'react-toastify/dist/ReactToastify.css';
+
+// Pages
 // Not Auth
 import Login from './Pages/Not Auth/Login'
 import Register from './Pages/Not Auth/Register'
@@ -14,6 +18,9 @@ import Register from './Pages/Not Auth/Register'
 import Home from './Pages/Auth/Home'
 import Posts from './Pages/Auth/Posts'
 import Perfil from './Pages/Auth/Perfil'
+
+// Context
+import {ContextComponent} from './context/MyContext'
 
 interface Props{
   component: React.FC;
@@ -41,7 +48,7 @@ const NotAuthRoute: React.FC<Props> = ({component: Component, path, exact}) => {
 
 function Routes() {
   return (
-    <>
+    <ContextComponent>
       <CreateGlobalStyle/>
       <Router>
         <Switch>
@@ -53,7 +60,7 @@ function Routes() {
           <NotAuthRoute component={Register} path="/register" />
         </Switch>
       </Router>
-    </>
+    </ContextComponent>
    
   );
 }

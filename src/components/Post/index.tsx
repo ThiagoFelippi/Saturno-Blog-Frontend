@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { Container, Content, Icons, Title, Description, Author } from './styles';
 
 // Icons
-import { FaTrash, FaCog } from 'react-icons/fa'
+import { FaTrash, FaPen } from 'react-icons/fa'
 
 interface Props{
   myPost? : boolean
@@ -19,7 +19,7 @@ const Post: React.FC<Props> = ({myPost}) => {
       {
         myPost ?
         <Icons>
-          <FaCog color="#918" size={25} />
+          <FaPen color="#918" size={25} />
           <FaTrash color="#918" size={25} />
         </Icons>
         :

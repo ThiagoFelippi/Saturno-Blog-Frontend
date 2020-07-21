@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 
 // Style
 import { Container, Description, Image, Name, AboutMe, SocialMedias, Logos, Network, Posts } from './styles'
@@ -7,6 +7,7 @@ import { Container, Description, Image, Name, AboutMe, SocialMedias, Logos, Netw
 import NavBar from '../../../components/NavBar';
 import Post from '../../../components/Post'
 import Notifications from '../../../components/Notifications'
+import CreatePost from '../../../components/CreatePost'
 
 // Images
 import Perfil from '../../../assets/perfil.jpg'
@@ -14,8 +15,27 @@ import Perfil from '../../../assets/perfil.jpg'
 // Icons
 import { FaInstagram, FaGithub, FaLinkedinIn } from 'react-icons/fa'
 
+// Context
+import AppContext from '../../../context/MyContext'
+
+// Apollo
+import { useQuery, gql } from '@apollo/client'
+
+// Get posts
+const getPostByUserId = gql`
+  query getPostByUserId{
+    getPostByUserId{
+      title
+    }
+  }
+`
 const Home: React.FC = () => {
-  return (
+  const { user, loading } = useContext(AppContext)
+  const {error, data} = useQuery(getPostByUserId)
+
+  return loading?
+    <h1> Loading... </h1>
+    :
     <>
       <NavBar />
       <Notifications />
@@ -23,7 +43,7 @@ const Home: React.FC = () => {
         <AboutMe>
           <Image src={Perfil} />
           <Name>
-            Nome do usuário
+            {user.name}
           </Name>
           <Description>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam odit, nesciunt consectetur ducimus sunt quasi facere voluptatem officiis iste deleniti tempora fugit eius quis harum cumque rerum necessitatibus, aspernatur asperiores.
@@ -38,14 +58,24 @@ const Home: React.FC = () => {
         </SocialMedias>
         <hr/>
         </AboutMe>
+        <CreatePost />
         <Posts>
-          <Post myPost />
-          <Post myPost />
-          <Post myPost />
+          {
+            !!error?
+            <>
+              <br/>
+              <h1> Esse usuário ainda não possui posts </h1>
+            </>
+            :
+            <>
+              <Post myPost />
+              <Post myPost />
+              <Post myPost />
+            </>
+          }
         </Posts>
       </Container>
     </>
-  )
 }
 
 export default Home;

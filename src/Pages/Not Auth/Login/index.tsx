@@ -13,6 +13,10 @@ import Input from '../../../components/Input'
 // Apollo
 import { gql, useMutation } from '@apollo/client'
 
+// Toastify
+import { toast } from 'react-toastify'
+toast.configure()
+
 interface UserLogin{
   email : string;
   password: string
@@ -29,16 +33,40 @@ const mutationLogin = gql`
 }
 `
 
+const createToast = (type : String, message : String) => {
+  const config = {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+  } as any
+  type === "success" ? 
+    toast.success(message, config) 
+    :
+    toast.error(message, config)
+
+}
+
 const Login: React.FC = () => {
   const [buttonText, setButtonText] = useState("Entrar")
   const [ userInfo, setUserInfo ] = useState<UserLogin>({} as UserLogin)
-  const [ addTodo, { data } ] = useMutation(mutationLogin)
+  const [ login, { data } ] = useMutation(mutationLogin)
+
+
+  useEffect(() => {
+    const [url, loginSuccess] = window.location.href.split("/?")
+    if(loginSuccess === "login=success"){
+      createToast("success", "Você foi registrado com sucesso, agora se logue")
+    }
+  }, [])
 
   const loginUser = async (e : React.MouseEvent<HTMLButtonElement>) => {
     try{
       e.preventDefault()
       setButtonText("Carregando...")
-      const {data} = await addTodo({
+      const {data} = await login({
         variables: {
           email: userInfo.email,
           password: userInfo.password
@@ -50,7 +78,7 @@ const Login: React.FC = () => {
 
       window.location.href = "/"
     }catch(err){
-      // Toastify
+      createToast("error", "Erro ao logar, verifique os campos")
       setButtonText("Entrar")
     }
   }

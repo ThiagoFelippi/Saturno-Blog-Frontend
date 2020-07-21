@@ -5,12 +5,13 @@ import { Input } from './styles';
 interface Props{
   placeholder? : string;
   type? : string;
-  change: (e : React.ChangeEvent<HTMLInputElement>) => void
+  change: (e : React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 }
 
-const InputComponent: React.FC<Props> = ({placeholder, type, change}) => {
+const InputComponent: React.FC<Props> = ({placeholder, type, change, required}) => {
   return (
-    <Input type={type || "text"} onChange={change} placeholder={placeholder} />
+    <Input type={type || "text"} onChange={change} placeholder={placeholder} required={required} />
   )
 }
 
