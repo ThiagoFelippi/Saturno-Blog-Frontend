@@ -18,6 +18,7 @@ const getPosts = gql`
     getAllPosts{
       id
       title
+      content
       user{
         id
         name
@@ -45,14 +46,16 @@ const Home: React.FC = () => {
     <>
       <NavBar />
       <Notifications/>
-      <Posts>
-        {posts.map(post => {
-          if(post.user.id === user.id){
-            return <Post key={post.id} myPost />
-          }
-          return <Post key={post.id}  />
-        })}
-      </Posts>
+      <Container>
+        <Posts>
+          {posts.map(post => {
+            if(post.user.id === user.id){
+              return <Post author={{id :post.user.id, name: post.user.name}} id={post.id} title={post.title} content={post.content}  key={post.id} myPost />
+            }
+            return <Post  author={{id :post.user.id, name: post.user.name}} id={post.id} title={post.title} content={post.content}  key={post.id}  />
+          })}
+        </Posts>
+      </Container>
     </>
 }
 

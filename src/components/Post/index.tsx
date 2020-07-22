@@ -12,14 +12,20 @@ import { FaTrash, FaPen } from 'react-icons/fa'
 // Modals
 import Modal from './Modals'
 
+interface Author{
+  name: string;
+  id: number
+}
+
 interface Props{
   myPost? : boolean;
   title?: string;
   content?: string;
+  author?: Author;
   id?: number;
 }
 
-const Post: React.FC<Props> = ({myPost, id, title, content}) => {
+const Post: React.FC<Props> = ({myPost, id, title, content, author}) => {
   const [ modalDelete, setModalDelete ] = useState(false)
   const [ modalEdit, setmodalEdit ] = useState(false)
 
@@ -48,7 +54,7 @@ const Post: React.FC<Props> = ({myPost, id, title, content}) => {
           </Description>
         </Content>
         <Author>
-          <Link title="Clique para ver o perfil" to="/" className="link" > By: Thiago Crespo </Link>
+          <Link title="Clique para ver o perfil" to={`/user/${author.id}`} className="link" > By: {author.name} </Link>
         </Author>
       </Container>
     </>

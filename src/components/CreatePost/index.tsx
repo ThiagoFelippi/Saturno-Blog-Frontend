@@ -9,11 +9,17 @@ import Modal from '../Modal'
 
 const CreatePost: React.FC = () => {
   const [ opened, setOpened ] = useState(false)
+
+  const initialValues = {
+    title: "",
+    content: ""
+  }
+  
   return (
     <>
         {
           ReactDOM.createPortal(
-            <Modal opened={opened} close={() => setOpened(opened ? false : true)} />,
+            <Modal value={initialValues} opened={opened} close={() => setOpened(opened ? false : true)} />,
             document.getElementById("modal-root")
           )
         }

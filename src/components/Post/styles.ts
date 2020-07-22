@@ -28,6 +28,7 @@ export const Title = styled.h3`
   font-size: 30px;
   top: 20px;
   position: absolute;
+  text-align: center;
 `
 
 export const Description = styled.p`

@@ -18,6 +18,8 @@ import Register from './Pages/Not Auth/Register'
 import Home from './Pages/Auth/Home'
 import Posts from './Pages/Auth/Posts'
 import Perfil from './Pages/Auth/Perfil'
+import Config from './Pages/Auth/Config'
+import User from './Pages/Auth/User'
 
 // Context
 import {ContextComponent} from './context/MyContext'
@@ -54,7 +56,8 @@ function Routes() {
         <Switch>
           <PrivateRoute component={Home} path="/" exact />
           <PrivateRoute component={Posts} path="/posts" />
-          <PrivateRoute component={Perfil} path="/perfil" />
+          <PrivateRoute component={Config} path="/config" />
+          <PrivateRoute component={Perfil} path="/user" />
           {/* Not auth  */}
           <NotAuthRoute component={Login} path="/login" />
           <NotAuthRoute component={Register} path="/register" />

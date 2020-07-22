@@ -13,6 +13,7 @@ export const Container = styled.div`
   align-items: center;
   text-align: center;
   font-size: 20px;
+  z-index: 4;
 `;
 
 export const List = styled.li`

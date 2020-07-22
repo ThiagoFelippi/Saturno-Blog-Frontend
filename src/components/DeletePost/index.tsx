@@ -39,6 +39,7 @@ const DeletePost: React.FC<Props> = ({close, id}) => {
       close()
       createToast("success", "Post deletado com sucesso")
     }catch(err){
+      console.log(err)
       createToast("error", "Erro ao deletar post")
     }
     

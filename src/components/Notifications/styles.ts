@@ -4,6 +4,11 @@ export const Container = styled.div`
   position: absolute;
   top: 30px;
   right: 80px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 export const Content = styled.div`
@@ -74,4 +79,8 @@ export const SeeMore = styled.div`
   &:hover{
     color: #918
   }
+`
+
+export const Notifications = styled.div`
+
 `

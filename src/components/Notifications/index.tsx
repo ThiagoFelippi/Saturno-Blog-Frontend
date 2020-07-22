@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 // Styles
-import { Container, Content, CounterNotification, Notification, SeeMore } from './styles';
+import { Container, Content, CounterNotification, Notification, SeeMore, Notifications } from './styles';
 
 // Icons
 import { FaBell } from 'react-icons/fa'
@@ -12,14 +12,15 @@ interface Notification{
 }
 
 const NotificationsComponent: React.FC = () => {
-  const [notification, setNotifications] = useState<Notification[]>([
+  const [ showNotification, setShowNotification ] = useState(true)
+  const [notifications, setNotifications] = useState<Notification[]>([
     {
       title: "Post",
-      description: "Seu amigo postou uma foto"
+      description: "Seu amigo João postou uma foto"
     },
     {
       title: "Post",
-      description: "Seu amigo postou uma foto"
+      description: "Seu amigo Cleber postou uma foto"
     }
   ])
 
@@ -27,23 +28,25 @@ const NotificationsComponent: React.FC = () => {
     <Container>
       <Content>
         <CounterNotification> 5 </CounterNotification>
-        <FaBell id="bell" size={30} />
+        <FaBell onClick={() => setShowNotification(!showNotification)} id="bell" size={30} />
       </Content>
-      <Notification>
-        <h1> Curtida </h1>
-        <p> Seu amigo Roberto postou uma foto</p>
-      </Notification>
-      <Notification>
-        <h1> Curtida </h1>
-        <p> Seu amigo Roberto postou uma foto</p>
-      </Notification>
-      <Notification>
-        <h1> Curtida </h1>
-        <p> Seu amigo Roberto postou uma foto</p>
-      </Notification>
-      <SeeMore>
-        Ver mais...
-      </SeeMore>
+      {
+      showNotification ?
+       <Notifications>
+       {notifications.map(notification => (
+         <Notification>
+           <h1> {notification.title} </h1>
+           <p> {notification.description} </p>
+         </Notification>
+        ))}
+        <SeeMore>
+          Ver mais...
+        </SeeMore>
+        </Notifications>
+        :
+        null
+      }
+     
     </Container>
   )
 }

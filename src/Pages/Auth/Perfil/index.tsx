@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 
 // Style
-import { Container, Description, Image, Name, AboutMe, SocialMedias, Logos, Network, Posts } from './styles'
+import { Container, Description, Image, Name, AboutMe, SocialMedias, Logos, Posts, Config, FollowersContent, Followers, Following } from './styles'
 
 // Components
 import NavBar from '../../../components/NavBar';
@@ -13,7 +13,7 @@ import CreatePost from '../../../components/CreatePost'
 import Perfil from '../../../assets/perfil.jpg'
 
 // Icons
-import { FaInstagram, FaGithub, FaLinkedinIn } from 'react-icons/fa'
+import { FaInstagram, FaGithub, FaLinkedinIn, FaUserCog } from 'react-icons/fa'
 
 // Context
 import AppContext from '../../../context/MyContext'
@@ -21,27 +21,118 @@ import AppContext from '../../../context/MyContext'
 // Apollo
 import { useQuery, gql } from '@apollo/client'
 
-// Get posts
-const getPostByUserId = gql`
-  query getPostByUserId{
-    getPostByUserId{
-      id
-      title
-      content
+const getFollowers = gql`
+  query getFollowers($id: Int!){
+    seeFollowers(id: $id){
+      followerId
+    }
+
+    seeFollowings(id: $id){
+      followingId
     }
   }
 `
+
+const getUserById = gql`
+  query getUserById($id: Int!){
+    getUserById(id: $id){
+      id
+      name
+      email
+      description
+      instagram
+      linkedin
+      github
+    
+      follower{
+        followerId
+        followingId
+      }
+
+      post{
+        title
+        content
+      }
+    }
+  }
+`
+      
+
+interface FollowersData{
+  followerId: number;
+  followingId: number;
+}
+
+interface IPost{
+  title: string;
+  content: string;
+}
+
+interface IUser{
+  id: number;
+  name: string;
+  email: string;
+  description: string;
+  linkedin: string;
+  github: string;
+  instagram: string;
+  post: IPost[]
+}
+
 const Home: React.FC = () => {
+  const id = Number(window.location.href.split("/user/")[1])
+  
   const { user, loading } = useContext(AppContext)
-  const {error, data} = useQuery(getPostByUserId)
+  const followersData = useQuery(getFollowers, {
+    variables: {
+      id
+    }
+  }).data
+  const userById = useQuery(getUserById, {
+    variables: {
+      id
+    }
+  }).data
+  const [ userInfos, setUserInfos ] = useState<IUser>({} as IUser)
   const [ posts, setPosts ] = useState([])
+  const [ followers, setFollowers ] = useState<any[]>([])
 
   useEffect(() => {
-    if(data){
-      setPosts(data.getPostByUserId)
+    if(followersData && userById){
+      setPosts(userById.getUserById.post)
+      const followingArray = followersData.seeFollowings.map((f: FollowersData) => f.followingId)
+      const followerArray = followersData.seeFollowers.map((f: FollowersData) => f.followerId)
+      const followingAndFollowerArray = [
+        {
+          type: "Followings",
+          followings: followingArray
+        },
+        {
+          type: "Followers",
+          followers: followerArray
+        }
+      ]
+      setFollowers(followingAndFollowerArray)
+      setUserInfos(userById.getUserById)
     }
 
-  }, [data, posts])
+  }, [followersData, userById])
+
+  const countFollowers = () => {
+    if(followers[1]){
+      const followersC = followers[1].followers
+      const followerCount = followersC.map((f : any) => f)
+      return followerCount.length
+    }
+  }
+
+  const countFollowings = () => {
+    if(followers[0]){
+      const followings = followers[0].followings
+      const followingCount = followings.map((f : number) => f)
+      return followingCount.length
+    }
+  }
 
   return loading?
     <h1> Loading... </h1>
@@ -53,25 +144,40 @@ const Home: React.FC = () => {
         <AboutMe>
           <Image src={Perfil} />
           <Name>
-            {user.name}
+            {userInfos.name}
           </Name>
           <Description>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Totam odit, nesciunt consectetur ducimus sunt quasi facere voluptatem officiis iste deleniti tempora fugit eius quis harum cumque rerum necessitatibus, aspernatur asperiores.
+            {userInfos.description}
           </Description>
         <SocialMedias>
           <Logos>
             {/* Logos here, when user take mouse inside increase size  */}
-            <a href="https://www.instagram.com/thiago_felippi1/?hl=pt-br" target="_blanck" > <FaInstagram size={60} /> </a>
-            <a href="https://www.linkedin.com/in/thiago-crespo-felippi/" target="_blanck" > <FaLinkedinIn size={60} />  </a>
-            <a href="https://github.com/ThiagoFelippi" target="_blanck" > <FaGithub size={60} />  </a>
+            <a href={userInfos.instagram} target="_blanck" > <FaInstagram size={60} /> </a>
+            <a href={userInfos.linkedin} target="_blanck" > <FaLinkedinIn size={60} />  </a>
+            <a href={userInfos.github} target="_blanck" > <FaGithub size={60} />  </a>
           </Logos>
         </SocialMedias>
+        <FollowersContent>
+          <Followers>
+              <h3> Seguidores :</h3>
+              <strong> {countFollowers()} </strong>
+          </Followers>
+          <Following>
+              <h3> Seguindo :</h3>
+              <strong> {countFollowings()} </strong>
+          </Following>
+        </FollowersContent>
         <hr/>
         </AboutMe>
-        <CreatePost />
+        {
+            userInfos.id === user.id ?
+            <CreatePost />
+            :
+            null
+        }
         <Posts>
           {
-            !!error?
+            !posts.length?
             <>
               <br/>
               <h1> Esse usuário ainda não possui posts </h1>
@@ -80,13 +186,22 @@ const Home: React.FC = () => {
             <>
             {
               posts.map((post) => (
-                <Post id={post.id} key={post.id} title={post.title} content={post.content} myPost />
+                <Post author={{id: userInfos.id, name: userInfos.name}} id={post.id} key={post.id} title={post.title} content={post.content} myPost />
               ))
             }
             </>
           }
         </Posts>
       </Container>
+      {
+        userInfos.id === user.id ?
+        <Config>
+          <FaUserCog onClick={() => window.location.href = "/config"} className="icon" size={50}  />
+        </Config>
+        :
+        null
+      }
+    
     </>
 }
 

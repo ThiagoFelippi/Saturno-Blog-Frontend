@@ -10,9 +10,13 @@ export default (type : String, message : String) => {
     pauseOnHover: true,
     draggable: true,
   } as any
-  type === "success" ? 
+  if(type === "success"){
     toast.success(message, config) 
-    :
+  }else if(type === "warning"){
+    toast.warning(message, config)
+  }else{
     toast.error(message, config)
+  }
+
 
 }

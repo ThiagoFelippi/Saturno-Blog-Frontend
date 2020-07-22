@@ -9,6 +9,7 @@ import { useQuery, gql } from '@apollo/client'
 import { string } from 'yup'
 
 interface IPost{
+  id: number;
   title: string;
   content: string;
 }
@@ -23,6 +24,7 @@ interface Props{
 const getPostById = gql`
 query getPostById($id: Int!) {
   getPostById(id: $id) {
+      id
       title
       content
     }
@@ -38,7 +40,7 @@ const ModalsComponent : React.FC<Props> = ({type, close, opened, id}) => {
       } 
     }
   );
-  
+
   useEffect(() => {
     if(data){
       setPostInfos(data.getPostById)
@@ -47,7 +49,7 @@ const ModalsComponent : React.FC<Props> = ({type, close, opened, id}) => {
 
  return type === "edit" ?
     ReactDOM.createPortal(
-      <Modal value={postInfos} opened={opened} close={close} />,
+      <Modal type="edit" value={postInfos} opened={opened} close={close} />,
       document.getElementById("modal-root")
     )
     :

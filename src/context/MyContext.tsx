@@ -18,6 +18,10 @@ interface User{
   id: number;
   name: string;
   email: string;
+  description: string;
+  linkedin: string;
+  github: string;
+  instagram: string;
 }
 
 interface IFollower{
@@ -31,19 +35,21 @@ interface IUser extends User{
 }
 
 const getUser = gql`
-  query getUserById{
-    getUserById{
+  query getUserByToken{
+    getUserByToken{
       id
       name
       email
+      description
+      linkedin
+      github
+      instagram
       follower{
-        followerId
         followingId
       }
     }
   }
 `
-
 
 interface Context{
   user?: IUser;
@@ -55,11 +61,22 @@ const Context = createContext<Context>({})
 
 export const ContextComponent : FC = ({children}) => {
   const [ user , setUser ] = useState<IUser>({} as IUser)
+
   const {loading, data} = useQuery(getUser)
 
   useEffect(() => {
     if(data){
-      setUser(data.getUserById)
+      const { id, name, email ,description, follower, linkedin, github, instagram } = data.getUserByToken
+      setUser({
+        id,
+        name,
+        email,
+        description,
+        follower,
+        linkedin,
+        github,
+        instagram
+      })
     }
   }, [data])
 
